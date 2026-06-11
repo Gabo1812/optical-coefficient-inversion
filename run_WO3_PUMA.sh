@@ -14,12 +14,17 @@
 
 # =============================================================
 # USO:
-#   sbatch run_WO3_PUMA.sh S2 1        ← Run 1 de S2 barrido amplio
-#   sbatch run_WO3_PUMA.sh S2 2        ← Run 2 de S2 refinamiento
-#   sbatch run_WO3_PUMA.sh S2 3        ← Run 3 de S2 ajuste fino
+#   sbatch run_WO3_PUMA_1.sh S2 1   ← Barrido amplio  (INIT=0) — YA HECHO P1-P4
+#   sbatch run_WO3_PUMA_1.sh S2 2   ← Refinamiento    (INIT=9) — PRÓXIMO para S2/S5
+#   sbatch run_WO3_PUMA_1.sh S2 3   ← Ajuste fino     (INIT=9) — actualizar QUAD_3/DFIX_3/INFFIX_3
+#   sbatch run_WO3_PUMA_1.sh S8 1   ← NUEVO barrido amplio S8  (INIT=0) — P1/P2 no convergieron
 #
-# Esperar el mail de END antes de lanzar el siguiente run.
-# El -sol.txt del run anterior debe estar en SRC para INIT=9. 
+# Parámetros actualizados (segunda llamada):
+#   LMIN=300 (antes 350), NOBS=150 (antes 100), INFLE=340-460 paso 20
+#   QUAD_2 con valores reales de P4 (S2) y P6 (S5)
+#
+# Para Run 2 (INIT=9): el -sol.txt del mejor run anterior debe estar en SRC.
+# Lanzar S2+S5 Run 2 simultáneamente (2 slots). S8 Run 1 cuando libere uno.
 # =============================================================
 
 SAMPLE_KEY="${1}"
@@ -36,40 +41,49 @@ fi
 case "$SAMPLE_KEY" in
     S2)
         FNAME="WO3_S2_10sccm"
-        # Run 1
+        # Run 1 — barrido amplio (YA HECHO: P1–P4, mejor P4)
         DMIN_1="0065"; DMAX_1="0150"; DSTEP_1=5
-        INFMIN_1=0350; INFMAX_1=0550; INFSTEP_1=25
-        # Run 2 — estrecho alrededor de 95 nm, inflexión 400 nm
-        QUAD_2="2.89e-05"
+        INFMIN_1=0340; INFMAX_1=0460; INFSTEP_1=20
+        N0INI=1.90; N0FIN=2.50; N0STEP=0.10
+        NFINI=1.80; NFFIN=2.20; NFSTEP=0.10
+        K0INI=0.00; K0FIN=0.30; K0STEP=0.02
+        # Run 2 — refinamiento desde P4-sol.txt (INIT=9)
+        QUAD_2="2.651887e-05"             # QE real de P4
         DMIN_2="0088"; DMAX_2="0102"; DSTEP_2=1
-        INFMIN_2=0390; INFMAX_2=0410; INFSTEP_2=5
-        # Run 3 — fijo en 95 nm, inflexión 400 nm
+        INFMIN_2=0340; INFMAX_2=0460; INFSTEP_2=20
+        # Run 3 — ajuste fino (actualizar QUAD_3/DFIX_3/INFFIX_3 con valores de Run 2)
         QUAD_3="<QUAD_RUN2>"
-        DFIX_3="0095"; INFFIX_3=0400
+        DFIX_3="<D_RUN2>"; INFFIX_3="<INF_RUN2>"
         ;;
     S5)
         FNAME="WO3_S5_7sccm"
-        # Run 1
+        # Run 1 — barrido amplio (YA HECHO: P1–P6, mejor P6)
         DMIN_1="0100"; DMAX_1="0160"; DSTEP_1=5
-        INFMIN_1=0350; INFMAX_1=0550; INFSTEP_1=25
-        # Run 2 — estrecho alrededor de 130 nm, inflexión 350 nm
-        QUAD_2="6.17e-05"
-        DMIN_2="0123"; DMAX_2="0137"; DSTEP_2=1
-        INFMIN_2=0340; INFMAX_2=0360; INFSTEP_2=5
-        # Run 3 — fijo en 130 nm, inflexión 350 nm
+        INFMIN_1=0340; INFMAX_1=0460; INFSTEP_1=20
+        N0INI=1.90; N0FIN=2.50; N0STEP=0.10
+        NFINI=1.80; NFFIN=2.20; NFSTEP=0.10
+        K0INI=0.00; K0FIN=0.30; K0STEP=0.02
+        # Run 2 — refinamiento desde P6-sol.txt (INIT=9)
+        QUAD_2="5.030000e-05"             # QE real de P6
+        DMIN_2="0126"; DMAX_2="0136"; DSTEP_2=1
+        INFMIN_2=0340; INFMAX_2=0460; INFSTEP_2=20
+        # Run 3 — ajuste fino (actualizar con valores de Run 2)
         QUAD_3="<QUAD_RUN2>"
-        DFIX_3="0130"; INFFIX_3=0350
+        DFIX_3="<D_RUN2>"; INFFIX_3="<INF_RUN2>"
         ;;
     S8)
         FNAME="WO3_S8_5sccm"
-        # Run 1
-        DMIN_1="0100"; DMAX_1="0180"; DSTEP_1=5
-        INFMIN_1=0300; INFMAX_1=0550; INFSTEP_1=25
+        # Run 1 — NUEVO barrido amplio (P1–P2 no convergieron, INIT=0)
+        DMIN_1="0090"; DMAX_1="0120"; DSTEP_1=2
+        INFMIN_1=0340; INFMAX_1=0460; INFSTEP_1=20
+        N0INI=2.00; N0FIN=2.70; N0STEP=0.10
+        NFINI=1.80; NFFIN=2.20; NFSTEP=0.10
+        K0INI=0.05; K0FIN=0.40; K0STEP=0.05
         # Run 2 — actualizar tras Run 1
         QUAD_2="<QUAD_RUN1>"
         DMIN_2="<DMIN>"; DMAX_2="<DMAX>"; DSTEP_2=1
-        INFMIN_2="<INFMIN>"; INFMAX_2="<INFMAX>"; INFSTEP_2=5
-        # Run 3 — actualizar tras Run 2
+        INFMIN_2=0340; INFMAX_2=0460; INFSTEP_2=20
+        # Run 3 — ajuste fino (actualizar con valores de Run 2)
         QUAD_3="<QUAD_RUN2>"
         DFIX_3="<D_RUN2>"; INFFIX_3="<INF_RUN2>"
         ;;
@@ -82,13 +96,8 @@ esac
 # ----------------------------------------------------------
 # Parámetros PUMA comunes
 # ----------------------------------------------------------
-NLAYERS=4; SLAYER=2; SUBSTRATE=60; DATATYPE=T; NOBS=100
-LMIN=0350; LMAX=1500
-
-# Rangos de n y k (solo usados en Run 1)
-N0INI=1.90; N0FIN=2.50; N0STEP=0.10
-NFINI=1.80; NFFIN=2.20; NFSTEP=0.10
-K0INI=0.00; K0FIN=0.30; K0STEP=0.02
+NLAYERS=4; SLAYER=2; SUBSTRATE=60; DATATYPE=T; NOBS=150
+LMIN=0300; LMAX=1500
 
 # ----------------------------------------------------------
 SRC="/home/jose.alvarezcastrillo/labavanzado/Lab_Avanzado"
@@ -108,7 +117,7 @@ rm -f $SRC/${FNAME}-inf.txt
 # n y k: rangos amplios definidos arriba
 # ----------------------------------------------------------
 if [[ "$RUN_NUM" == "1" ]]; then
-    echo "=== RUN 1 — Barrido amplio ==="
+    echo "=== RUN 1 — Barrido amplio (INIT=0, LMIN=$LMIN, NOBS=$NOBS) ==="
     ./puma_mod $FNAME \
         $NLAYERS $SLAYER $SUBSTRATE $DATATYPE $NOBS \
         $LMIN $LMAX 3000 1e+100 0 \
@@ -124,7 +133,7 @@ if [[ "$RUN_NUM" == "1" ]]; then
 # n y k: NO se pasan, PUMA los toma del -sol.txt
 # ----------------------------------------------------------
 elif [[ "$RUN_NUM" == "2" ]]; then
-    echo "=== RUN 2 — Refinamiento ==="
+    echo "=== RUN 2 — Refinamiento (INIT=9, LMIN=$LMIN, NOBS=$NOBS) ==="
     ./puma_mod $FNAME \
         $NLAYERS $SLAYER $SUBSTRATE $DATATYPE $NOBS \
         $LMIN $LMAX 5000 $QUAD_2 9 \
