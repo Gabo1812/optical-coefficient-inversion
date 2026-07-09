@@ -16,13 +16,13 @@ start_time = time.time()
 # =========================================================
 # CONFIGURACION
 # =========================================================
-MUESTRA = "S5"
-ESPESOR_PUMA = 131.0   # espesor de referencia (el que dio PUMA)
+MUESTRA = "S2"
+ESPESOR_PUMA = 95.0   # espesor de referencia (el que dio PUMA)
 CENTRO       = 550.0  # nm — punto de referencia estable (k≈0, sin ambiguedad)
 MEDIO_ANCHO  = 20.0   # nm
 
 # Barrido de espesores candidatos alrededor del valor de PUMA
-ESPESORES_CANDIDATOS = np.arange(ESPESOR_PUMA - 30, ESPESOR_PUMA + 5.5, 1)
+ESPESORES_CANDIDATOS = np.arange(ESPESOR_PUMA - 25, ESPESOR_PUMA + 10.5, 1)
 
 BASE = r"C:\Users\Gabo\Computacional\LabAvanzadoII\WO3"
 archivo_exp  = os.path.join(BASE, "WO3_fortran", f"{MUESTRA}_Dy_T")
@@ -161,7 +161,7 @@ ax.plot(espesores_arr, errores_arr, "o-", color="steelblue", linewidth=1.5)
 ax.axvline(ESPESOR_PUMA, color="darkorange", linestyle="--",
            label=f"Espesor PUMA ({ESPESOR_PUMA:.0f} nm)")
 ax.axvline(espesor_optimo, color="crimson", linestyle=":",
-           label=f"Minimo Fortran ({espesor_optimo:.0f} nm)")
+           label=f"Minimo SPG ({espesor_optimo:.0f} nm)")
 ax.set_yscale("log")
 ax.set_xlabel("Espesor (nm)", fontsize=11)
 ax.set_ylabel("Error de ajuste (LARGEST FUNCTION)", fontsize=11)
