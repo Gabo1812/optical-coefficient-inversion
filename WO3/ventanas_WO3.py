@@ -22,7 +22,7 @@ VENTANA = 25        # medio-ancho de cada ventana espectral en nm
 PASO    = 10        # separacion entre centros de ventana en nm
                     # (PASO < VENTANA genera solapamiento entre ventanas)
 
-BASE = r"C:\Users\Gabo\Computacional\LabAvanzadoII\WO3"
+BASE = r"C:\Users\XPC\Desktop\Computacional\LabAvanzadoII\WO3"
 archivo_exp  = os.path.join(BASE, "WO3_fortran", f"{MUESTRA}_Dy_T")
 archivo_nk   = os.path.join(BASE, "WO3_fortran", f"{MUESTRA}_DATANK0_DY")
 film0_source = os.path.join(BASE, "FILM0.f")
